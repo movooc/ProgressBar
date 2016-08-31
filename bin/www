@@ -1,0 +1,28 @@
+var path = require('path');
+
+// webpack module
+var webpack = require('webpack');
+var webpackDevServer = require('webpack-dev-server');
+var webpackConfig = require("../webpack.config.js");
+
+// compiler
+var compiler = webpack(webpackConfig);
+
+// webpack dev server options
+var devServerOptions = {
+  // contentBase: path.resolve(__dirname, 'dist'),
+  contentBase: path.resolve(__dirname, 'dist'),
+  hot: true
+  // historyApiFallback: false,
+  // noInfo: true,
+  // stats: {
+  //   colors: true
+  // }
+};
+
+// run 
+var server = new webpackDevServer(compiler, devServerOptions);
+
+server.listen(8333, 'localhost',() => {
+  console.log(`Server running at http://127.0.0.1:8333`);
+});
