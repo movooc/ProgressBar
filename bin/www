@@ -11,7 +11,7 @@ var compiler = webpack(webpackConfig);
 // webpack dev server options
 var devServerOptions = {
   // contentBase: path.resolve(__dirname, 'dist'),
-  contentBase: path.resolve(__dirname, 'dist'),
+  contentBase: path.resolve(__dirname, '../'),
   hot: true
   // historyApiFallback: false,
   // noInfo: true,
