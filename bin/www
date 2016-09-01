@@ -10,14 +10,28 @@ var compiler = webpack(webpackConfig);
 
 // webpack dev server options
 var devServerOptions = {
-  // contentBase: path.resolve(__dirname, 'dist'),
   contentBase: path.resolve(__dirname, '../'),
-  hot: true
-  // historyApiFallback: false,
-  // noInfo: true,
-  // stats: {
-  //   colors: true
-  // }
+  //contentBase: 'http://127.0.0.1',
+  //hot: true,
+  historyApiFallback: false,
+  noInfo: true,
+  inline: true,
+  stats: {
+    colors: true
+  }
+};
+
+// window执行webpack
+if(require('os').platform() === 'win32'){
+  var child_process = require('child_process');
+  // 启动子进程
+  child_process.exec('webpack webpack.config.js -w -d', {
+      cmd: process.cwd()
+  }, function(err, data){
+    if(err){
+      console.log('webpack info:\n'+err);
+    }
+  });
 };
 
 // run 
