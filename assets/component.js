@@ -5,7 +5,7 @@ var $progressBar = null;
 
 export default React.createClass({
   getInitialState: function(){
-    return {progressBar: '',file: {}};
+    return {progressing: 0,file: {}};
   },
   // 
   componentWillMount: function(){
@@ -15,8 +15,9 @@ export default React.createClass({
   start: function() {
     //
     console.log('start');
-    console.log(this.state.file.size);
-    $progressBar = $(this.refs.progress).progressBar({duration : this.state.file.size});
+    this.setState(Object.assign(this.state,{progressing:0}));
+    $progressBar = $(this.refs.progress).off('progressBar')
+    .progressBar({duration : this.state.file.size});
   },
 
   pause: function() {
@@ -24,15 +25,24 @@ export default React.createClass({
     $progressBar.data('progressing').stop();
   },
 
+  contining: function() {
+    // 进度条继续
+    $progressBar.data('progressing').contining();
+  },
+
   end: function() {
+      var self = this;
       // 进度条100%
       $progressBar.data('progressing').complete(function(){
-          
+        console.log('end');
+        self.setState(Object.assign(self.state,{progressing:1}));
       });
   },
 
   reset: function() {
-    //this.refs.myTextInput.focus();
+    // 进度条0
+    $progressBar.data('progressing').reset();
+    this.setState(Object.assign(this.state,{progressing:0}));
   },
 
   fileChange: function(event){
@@ -49,8 +59,10 @@ export default React.createClass({
         <div className="progressBar" ref="progress">
           <div className="progress_bar"></div>
         </div>
-        <button onClick={this.pause}>暂停</button>
-        <button onClick={this.end}>结束</button>
+        <p>{this.state.progressing ? '上传完成' : ''}</p>
+        <button onClick={this.pause}>暂停</button>&nbsp;
+        <button onClick={this.contining}>继续</button>&nbsp;
+        <button onClick={this.end}>结束</button>&nbsp;
         <button onClick={this.reset}>重置</button>
       </div>
     )

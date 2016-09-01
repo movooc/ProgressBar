@@ -1,13 +1,13 @@
 // create ProgressBar modules
 (function($) {
     // ProgressBar
-    
     window.ProgressBar = function(element, options){
         var self = this;
         var settings = $.extend ({
           duration: 10000,
           percentage: 0,
-          lag: 50
+          lag: 50,
+          isEnd: false
         }, options || {});
         // 初始化
         self.duration = settings.duration;
@@ -40,19 +40,22 @@
       self.curDuration = 0;
       // 当前行走距离
       self.distance = 0;
+      // 计算时间周期间隔
+      self.intervaLag = (function(){
+          if(self.duration < 100000){
+              return self.lag;
+          }else{
+              return (`${self.duration}`.length - 5)*50;
+          }
+      })();
+      //
+      //console.log('self.intervaLag'+self.intervaLag);
       // 开始加速度
       self.run();
     };
 
-    ProgressBar.prototype.run = function() {
+    ProgressBar.prototype.run = function(lag) {
         var self = this;
-        var lag = (function(){
-            if(self.duration < 100000){
-                return self.lag;
-            }else{
-                return (`${self.duration}`.length - 5)*50;
-            }
-        })();
         //
         self.timer = window.setInterval(function(){
             // 当前时间
@@ -60,7 +63,7 @@
             // 距离
             self.distance = self.distance + (self.acceleration*Math.pow(self.curDuration, 2));
             self.accelerate(`${self.distance}px`);
-        }, lag);
+        }, self.intervaLag);
     };
 
     ProgressBar.prototype.accelerate = function(distance) {
@@ -77,13 +80,35 @@
 
     ProgressBar.prototype.complete = function(callback){
         // 清除时间计数器
-        window.clearInterval(this.timer);
-        this.$progress_bar.animate({width:'100%'}, {complete:callback,duration:100});
+        if(!this.isEnd){
+          window.clearInterval(this.timer);
+          this.$progress_bar.animate({width:'100%'}, {complete:callback,duration:100});
+          this.isEnd = true;
+        }
     };
 
     ProgressBar.prototype.stop = function(callback){
         // 清除时间计数器
         window.clearInterval(this.timer);
+    };
+
+    ProgressBar.prototype.contining = function(callback){
+        // 继续
+        if(!this.isEnd){
+          window.clearInterval(this.timer);
+          this.run();
+        }      
+    };
+
+    ProgressBar.prototype.reset = function(callback){
+        // 重值进度条
+        window.clearInterval(this.timer);
+        this.$progress_bar.animate({width:'0'}, {duration:100});
+        this.isEnd = false;
+        // 当前行走时间
+        this.curDuration = 0;
+        // 当前行走距离
+        this.distance = 0;
     };
 
     $.fn.progressBar = function(options) {
