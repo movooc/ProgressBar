@@ -21,18 +21,22 @@
 ###要依赖于jquery
 
 ###初始化:
-
 ```js
 
+   /**进度条初始化并启动**/
    var $progressBar = $(element).progressBar({duration : file.size});
+
    /**结束进度条
     * param : callback //结束后回调
    */
    $progressBar.complete(callback);
+
    /**暂停进度条**/
    $progressBar.stop();
+
    /**继续进度条**/
    $progressBar.contining();
+   
    /**重置进度条**/
    $progressBar.reset();
 
